@@ -52,7 +52,10 @@ public class Editor {
                 if (Arquivo.getFile() != null) {
                     if (verificarAlteração()) Main.definirNomeArquivoTitulo(Arquivo.getFile().getName(), true);
                     else Main.definirNomeArquivoTitulo(Arquivo.getFile().getName(), false);
-                } else Main.definirNomeArquivoTitulo("Novo arquivo", true);
+                } else {
+                    if (verificarAlteração()) Main.definirNomeArquivoTitulo("Novo arquivo", true);
+                    else Main.definirNomeArquivoTitulo("Novo arquivo", false);
+                }
             }
         });
         

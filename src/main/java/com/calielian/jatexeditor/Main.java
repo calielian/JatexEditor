@@ -52,21 +52,24 @@ public class Main {
         JMenuItem novoArquivo = new JMenuItem("Novo");
         JMenuItem abrirArquivo = new JMenuItem("Abrir");
         JMenuItem salvar = new JMenuItem("Salvar");
+        JMenuItem salvarComo = new JMenuItem("Salvar como");
 
         novoArquivo.addActionListener(e -> Arquivo.criarNovoArquivo());
         abrirArquivo.addActionListener(e -> Arquivo.abrirArquivo());
         salvar.addActionListener(e -> Arquivo.salvarArquivo());
+        salvarComo.addActionListener(e -> Arquivo.salvarArquivoComo());
 
         arquivosMenu.add(novoArquivo);
         arquivosMenu.add(abrirArquivo);
         arquivosMenu.add(salvar);
+        arquivosMenu.add(salvarComo);
         
         menuBar.add(arquivosMenu);
     }
 
-    public static void definirNomeArquivoTitulo(String name, boolean a) {
-        if (a) mainFrame.setTitle("JatexEditor - [%s]*".formatted(name));
-        else mainFrame.setTitle("JatexEditor - %s".formatted(name));
+    public static void definirNomeArquivoTitulo(String nome, boolean modificado) {
+        if (modificado) mainFrame.setTitle("JatexEditor - [%s]*".formatted(nome));
+        else mainFrame.setTitle("JatexEditor - %s".formatted(nome));
     }
 
 }

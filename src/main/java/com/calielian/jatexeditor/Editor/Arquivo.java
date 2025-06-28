@@ -31,7 +31,7 @@ public class Arquivo {
                 try {
                     String caminho = escolher.getSelectedFile().getAbsolutePath();
                     
-                    file = new File(caminho + "/"+ nome);
+                    file = new File(caminho + "/" + nome);
 
                     while (!file.createNewFile()) {
                         int opcao = JOptionPane.showOptionDialog(
@@ -84,7 +84,7 @@ public class Arquivo {
         escolher.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         if (escolher.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            file = new File(escolher.getSelectedFile().getAbsolutePath());
+            file = escolher.getSelectedFile();
 
             try {
                 editor.definirTextoEditor(new String(Files.readAllBytes(Path.of(file.getAbsolutePath()))));
@@ -100,18 +100,28 @@ public class Arquivo {
     }
 
     public static void salvarArquivo() {
-        try {
-            Files.writeString(Path.of(file.getAbsolutePath()), editor.texto.getText());
-            editor.atualizarTexto(Files.readAllBytes(file.toPath()));
-            Main.definirNomeArquivoTitulo(file.getName(), false);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Não foi possível salvar o arquivo.", "Erro", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+        if (file != null) {
+            try {
+                Files.writeString(Path.of(file.getAbsolutePath()), editor.texto.getText());
+                editor.atualizarTexto(Files.readAllBytes(file.toPath()));
+                Main.definirNomeArquivoTitulo(file.getName(), false);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Não foi possível salvar o arquivo.", "Erro", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        } else {
+            criarNovoArquivo();
         }
     }
 
     public static void salvarArquivoComo() {
-        JFileChooser escolher = new JFileChooser(FileSystemView.getFileSystemView().getParentDirectory(file.getParentFile()));
+        JFileChooser escolher;
+    
+        if (file != null) {
+            escolher = new JFileChooser(file.getParentFile());
+        } else {
+            escolher = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        }
 
         String nome = JOptionPane.showInputDialog("Digite o nome do arquivo:");
 
@@ -163,7 +173,7 @@ public class Arquivo {
 
                     break;
                 } catch (IOException e) {
-                    if (!sobrescrever) JOptionPane.showMessageDialog(null, "Não foi possível criar o arquivo, tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    if (!sobrescrever) JOptionPane.showMessageDialog(null, "Não foi possível salvar o arquivo, tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
                     else JOptionPane.showMessageDialog(null, "Não foi possível sobrescrever o arquivo, verifique se possui a permissão de escrita sobre o arquivo.", "Erro", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     break;
