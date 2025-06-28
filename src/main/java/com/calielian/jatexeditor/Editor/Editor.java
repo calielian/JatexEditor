@@ -1,4 +1,4 @@
-package com.calielian.texteditor.Editor;
+package com.calielian.jatexeditor.Editor;
 
 import java.awt.Color;
 
@@ -10,6 +10,7 @@ import javax.swing.JTextArea;
 public class Editor {
 
     private JScrollPane editorPanel;
+    private JTextArea texto;
 
     public Editor() {
 
@@ -19,7 +20,7 @@ public class Editor {
 
         panel.setLayout(new BoxLayout(panel, 0));
 
-        JTextArea texto = new JTextArea();
+        texto = new JTextArea();
 
         texto.setLineWrap(true);
         
@@ -30,5 +31,9 @@ public class Editor {
 
     public JScrollPane getPanel() {
         return this.editorPanel;
+    }
+
+    public String getEditorText() {
+        return texto.getText();
     }
 }

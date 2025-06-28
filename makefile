@@ -1,5 +1,5 @@
 # Defina o nome do JAR gerado
-JAR_NAME = cabralnavegador-*.jar
+JAR_NAME = jatexeditor-*.jar
 
 # Comando padrão (executado quando você digita apenas "make")
 all: clean build run

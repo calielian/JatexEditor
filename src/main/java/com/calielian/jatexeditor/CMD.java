@@ -1,4 +1,4 @@
-package com.calielian.texteditor;
+package com.calielian.jatexeditor;
 
 import java.awt.Color;
 import java.awt.Dimension;
