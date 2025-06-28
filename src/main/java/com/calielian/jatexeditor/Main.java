@@ -28,7 +28,7 @@ public class Main {
         editor = new Editor();
         CMD cmd = new CMD();
 
-        mainFrame = new JFrame("Text Editor");
+        mainFrame = new JFrame("JatexEditor - Novo arquivo");
         mainFrame.setMinimumSize(new Dimension(1000, 550));
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setLayout(new BorderLayout());
@@ -47,16 +47,26 @@ public class Main {
     public static void iniciarMenuBar() {
         menuBar = new JMenuBar();
 
-        JMenu arquivosMenu = new JMenu("File");
+        JMenu arquivosMenu = new JMenu("Aquivo");
 
-        JMenuItem novoArquivo = new JMenuItem("New");
-        JMenuItem abrirArquivo = new JMenuItem("Open");
+        JMenuItem novoArquivo = new JMenuItem("Novo");
+        JMenuItem abrirArquivo = new JMenuItem("Abrir");
+        JMenuItem salvar = new JMenuItem("Salvar");
 
         novoArquivo.addActionListener(e -> Arquivo.criarNovoArquivo());
+        abrirArquivo.addActionListener(e -> Arquivo.abrirArquivo());
+        salvar.addActionListener(e -> Arquivo.salvarArquivo());
 
         arquivosMenu.add(novoArquivo);
         arquivosMenu.add(abrirArquivo);
+        arquivosMenu.add(salvar);
         
         menuBar.add(arquivosMenu);
     }
+
+    public static void definirNomeArquivoTitulo(String name, boolean a) {
+        if (a) mainFrame.setTitle("JatexEditor - [%s]*".formatted(name));
+        else mainFrame.setTitle("JatexEditor - %s".formatted(name));
+    }
+
 }
