@@ -26,7 +26,6 @@ public class Main {
 
     public static void iniciarFrame() {
         editor = new Editor();
-        CMD cmd = new CMD();
 
         mainFrame = new JFrame("JatexEditor - Novo arquivo");
         mainFrame.setMinimumSize(new Dimension(1000, 550));
@@ -35,7 +34,6 @@ public class Main {
         mainFrame.setIconImage(new ImageIcon(Arquivo.class.getResource("/assets/main.png")).getImage());
 
         mainFrame.add(editor.getPanel(), BorderLayout.CENTER);
-        mainFrame.add(cmd.getPanel(), BorderLayout.EAST);
 
         iniciarMenuBar();
 
