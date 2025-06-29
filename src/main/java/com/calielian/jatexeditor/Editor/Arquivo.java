@@ -21,6 +21,8 @@ public class Arquivo {
 
         String nome = JOptionPane.showInputDialog("Digite o nome do arquivo:");
 
+        if (nome == null) return;
+
         boolean sobrescrever = false;
 
         escolher.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -124,6 +126,8 @@ public class Arquivo {
         }
 
         String nome = JOptionPane.showInputDialog("Digite o nome do arquivo:");
+
+        if (nome == null) return;
 
         boolean sobrescrever = false;
 
