@@ -100,7 +100,9 @@ public class Config {
         }
     }
 
-    private static void mostrarErro() {JOptionPane.showMessageDialog(null, "O arquivo de configuração é inválido! Verifique se segue esse modelo:\n\nTAM_FONTE=numero_inteiro\nTEMA=palavra (valores permitidos para tema: \"claro\", \"escuro\", sem aspas, em minúsculo)", "Erro", JOptionPane.ERROR_MESSAGE);}
+    private static void mostrarErro() {
+        JOptionPane.showMessageDialog(null, "O arquivo de configuração é inválido! Verifique se segue esse modelo:\n\nTAM_FONTE=numero_inteiro\nTEMA=palavra (valores permitidos para tema: \"claro\", \"escuro\", sem aspas, em minúsculo)", "Erro", JOptionPane.ERROR_MESSAGE);
+    }
 
     public static void iniciar() {
         try {
@@ -113,21 +115,26 @@ public class Config {
                 String[] configFonte = config.get(0).split("=");
                 String[] configTema = config.get(1).split("=");
 
-                if (config.get(TAMANHO_FONTE).contains("=") && configFonte[0].equals(CONF_FONTE)) {
+                if (config.get(TAMANHO_FONTE).contains("=") && configFonte[0].equals("TAM_FONTE")) {
                     try {
                         Integer.parseInt(configFonte[1]);
                     } catch (NumberFormatException e) {
-                        mostrarErro();
                         e.printStackTrace();
+                        mostrarErro();
+                        System.exit(1);
                     }
                 } else mostrarErro();
 
-                if (config.get(TEMA).contains("=") && configTema[0].equals(CONF_TEMA)) {
-                    if (!configTema[1].equals("claro") || !configTema[1].equals("escuro")) mostrarErro();
-                } else mostrarErro();
+                if (config.get(TEMA).contains("=") && configTema[0].equals("TEMA")) {
+                    if (!(configTema[1].equals("claro") || configTema[1].equals("escuro"))) {mostrarErro(); System.exit(1);}
+                } else {
+                    mostrarErro();
+                    System.exit(1);
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Não foi possível criar ou ler o arquivo de configurações.", "Erro", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
     }
 

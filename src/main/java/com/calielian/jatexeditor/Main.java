@@ -24,7 +24,7 @@ public class Main {
 
         String tema = Config.acessarConfiguracoes(Config.TEMA);
 
-        if (tema == "claro") FlatLightLaf.setup();
+        if (tema.equals("claro")) FlatLightLaf.setup();
         else FlatDarkLaf.setup();
 
         iniciarFrame();
