@@ -12,6 +12,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.calielian.jatexeditor.Main;
+import com.calielian.jatexeditor.Config;
 
 public class Editor {
 
@@ -45,7 +46,6 @@ public class Editor {
         
             @Override
             public void changedUpdate(DocumentEvent e) {
-                // Não usado para JTextArea padrão
             }
         
             private void atualizarTitulo() {
@@ -58,6 +58,8 @@ public class Editor {
                 }
             }
         });
+
+        texto.setFont(Config.pegarFonteDefinida());
         
         panel.add(texto);
 

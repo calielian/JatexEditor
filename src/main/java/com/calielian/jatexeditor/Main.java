@@ -1,6 +1,7 @@
 package com.calielian.jatexeditor;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -22,9 +23,7 @@ public class Main {
     public static void main(String[] args) {
         Config.iniciar();
 
-        String tema = Config.acessarConfiguracoes(Config.TEMA);
-
-        if (tema.equals("claro")) FlatLightLaf.setup();
+        if (Config.acessarConfiguracoes(Config.TEMA).equals("claro")) FlatLightLaf.setup();
         else FlatDarkLaf.setup();
 
         iniciarFrame();
@@ -59,7 +58,7 @@ public class Main {
         JMenuItem salvar = new JMenuItem("Salvar");
         JMenuItem salvarComo = new JMenuItem("Salvar como");
 
-        JMenuItem fonte = new JMenuItem("Alterar tamanho da fonte");
+        JMenuItem fonte = new JMenuItem("Alterar fonte");
         JMenuItem tema = new JMenuItem("Alterar tema padrão");
 
         novoArquivo.addActionListener(e -> Arquivo.criarNovoArquivo());
