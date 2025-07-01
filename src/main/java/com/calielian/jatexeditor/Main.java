@@ -1,7 +1,6 @@
 package com.calielian.jatexeditor;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -67,7 +66,6 @@ public class Main {
         salvarComo.addActionListener(e -> Arquivo.salvarArquivoComo());
 
         fonte.addActionListener(e -> Config.alterarFonte());
-        tema.addActionListener(e -> Config.alterarTema());
 
         arquivosMenu.add(novoArquivo);
         arquivosMenu.add(abrirArquivo);

@@ -1,9 +1,12 @@
 package com.calielian.jatexeditor;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,10 +14,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.calielian.jatexeditor.Editor.Arquivo;
 
@@ -41,8 +48,9 @@ public class Config {
         try {
             config = Files.readAllLines(PATH_ARQUIVO_CONF);
 
-            if (tipo == TAMANHO_FONTE) return config.get(0).split("=")[1];
-            else if (tipo == TEMA) return config.get(1).split("=")[1];
+            if (tipo == FONTE) return config.get(FONTE).split("=")[1];
+            else if (tipo == TAMANHO_FONTE) return config.get(TAMANHO_FONTE).split("=")[1];
+            else if (tipo == TEMA) return config.get(TEMA).split("=")[1];
 
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Não foi possível acessar o arquivo de configurações.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -56,19 +64,57 @@ public class Config {
         JFrame frame = new JFrame("Configurações da fonte");
 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(new Dimension(700, 400));
+        frame.setSize(new Dimension(430, 70));
         frame.setResizable(false);
         frame.setIconImage(new ImageIcon(Main.class.getResource("/assets/main.png")).getImage());
 
         JPanel painelConfig = new JPanel();
+        painelConfig.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JLabel nomeFonte = new JLabel();
+        String[] opcoes = pegarFontes().toArray(new String[0]);
 
-        
+        JComboBox<String> fontes = new JComboBox<>(opcoes);
+        fontes.setEditable(false);
+        fontes.setSelectedItem(pegarFonteDefinida().getFamily());
 
+        fontes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                config.remove(FONTE);
+                config.add(FONTE, CONF_FONTE + (String) fontes.getSelectedItem());
+                try {
+                    Files.write(PATH_ARQUIVO_CONF, config);
+                } catch (IOException error) {
+                    JOptionPane.showMessageDialog(null, "Não foi possível salvar a fonte no arquivo de configuração, verifique se o arquivo existe ou altere manualmente o arquivo pra família selecionada\n%s".formatted((String) fontes.getSelectedItem()), "Erro", JOptionPane.ERROR_MESSAGE);
+                    error.printStackTrace();
+                }
+            }
+        });
+
+        JSpinner tamanhoFonte = new JSpinner(new SpinnerNumberModel(Integer.parseInt(acessarConfiguracoes(TAMANHO_FONTE)), 10, 42, 2));
+
+        tamanhoFonte.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent arg0) {
+                config.remove(TAMANHO_FONTE);
+                config.add(TAMANHO_FONTE, CONF_TAM_FONTE + String.valueOf(tamanhoFonte.getValue()));
+
+                try {
+                    Files.write(PATH_ARQUIVO_CONF, config);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Não foi possível salvar o tamanho da fonte no arquivo de configuração, verifique se o arquivo existe ou altere manualmente o arquivo para o tamanho selecionado\n%d".formatted(tamanhoFonte.getValue()), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        painelConfig.add(fontes);
+        painelConfig.add(tamanhoFonte);
+
+        frame.add(painelConfig);
+        frame.setVisible(true);
     }
 
-    public static void tamanhoFonte() {
+    private static void tamanhoFonte() {
         reinicio: while (true) {
             try {
                 String escolha = JOptionPane.showInputDialog("Digite o novo tamanho:");
@@ -131,7 +177,7 @@ public class Config {
     }
 
     private static void mostrarErro() {
-        JOptionPane.showMessageDialog(null, "O arquivo de configuração é inválido! Verifique se segue esse modelo:\n\nTAM_FONTE=numero_inteiro\nTEMA=palavra (valores permitidos para tema: \"claro\", \"escuro\", sem aspas, em minúsculo)", "Erro", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "O arquivo de configuração é inválido! Verifique se segue esse modelo:\n\nFONTE=familia (familia da fonte, deve estar no sistema)\nTAM_FONTE=numero_inteiro\nTEMA=palavra (valores permitidos para tema: \"claro\", \"escuro\", sem aspas, em minúsculo)", "Erro", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void iniciar() {
@@ -149,6 +195,8 @@ public class Config {
 
         fontePadrao = fonteCustom.deriveFont(14f);
 
+        fonteDefinida = fontePadrao;
+
         fontesDisponiveis = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 
         try {
@@ -160,7 +208,7 @@ public class Config {
 
                 String[] configFonte = config.get(FONTE).split("=");
                 String[] configTamFonte = config.get(TAMANHO_FONTE).split("=");
-                String[] configTema = config.get(FONTE).split("=");
+                String[] configTema = config.get(TEMA).split("=");
 
                 if (config.get(TAMANHO_FONTE).contains("=") && configTamFonte[0].equals("TAM_FONTE")) {
                     try {
@@ -182,7 +230,7 @@ public class Config {
 
                         fonteDefinida = fontePadrao;
                     } else {
-                        fontePadrao = new Font(configFonte[1], Font.PLAIN, Integer.parseInt(configTamFonte[1]));
+                        fonteDefinida = new Font(configFonte[1], Font.PLAIN, Integer.parseInt(configTamFonte[1]));
                     }
                 }
 
