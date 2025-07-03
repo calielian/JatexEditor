@@ -7,6 +7,8 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +28,7 @@ import javax.swing.event.ChangeListener;
 import com.calielian.jatexeditor.Editor.Arquivo;
 
 public class Config {
-    private static final List<String> CONFIG_PADRAO = List.of("FONTE=jetbrains", "TAM_FONTE=18", "TEMA=claro");
+    private static final List<String> CONFIG_PADRAO = List.of("FONTE=jetbrains", "TAM_FONTE=14", "TEMA=claro");
 
     public static final int FONTE = 0;
     public static final int TAMANHO_FONTE = 1;
@@ -63,7 +65,7 @@ public class Config {
     public static void alterarFonte() {
         JFrame frame = new JFrame("Configurações da fonte");
 
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setSize(new Dimension(430, 70));
         frame.setResizable(false);
         frame.setIconImage(new ImageIcon(Main.class.getResource("/assets/main.png")).getImage());
@@ -80,8 +82,13 @@ public class Config {
         fontes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String selecionado = (String) fontes.getSelectedItem();
+
+                if (selecionado.equals("JetBrains Mono Medium")) selecionado = "jetbrains";
+
                 config.remove(FONTE);
-                config.add(FONTE, CONF_FONTE + (String) fontes.getSelectedItem());
+                config.add(FONTE, CONF_FONTE + selecionado);
+
                 try {
                     Files.write(PATH_ARQUIVO_CONF, config);
                 } catch (IOException error) {
@@ -110,36 +117,45 @@ public class Config {
         painelConfig.add(fontes);
         painelConfig.add(tamanhoFonte);
 
+        frame.addWindowListener(new WindowListener() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                String fonte = (acessarConfiguracoes(FONTE).equals("JetBrains Mono Medium")) ? "jetbrains" : acessarConfiguracoes(FONTE);
+
+                fonteDefinida = (!fonte.equals("jetbrains")) ? (new Font(acessarConfiguracoes(FONTE), Font.PLAIN, Integer.parseInt(acessarConfiguracoes(TAMANHO_FONTE)))) : (new Font("JetBrains Mono Medium", Font.PLAIN, Integer.parseInt(acessarConfiguracoes(TAMANHO_FONTE))));
+
+                Main.editor.texto.setFont(fonteDefinida);
+
+                frame.dispose();
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+        });
+
         frame.add(painelConfig);
         frame.setVisible(true);
-    }
-
-    private static void tamanhoFonte() {
-        reinicio: while (true) {
-            try {
-                String escolha = JOptionPane.showInputDialog("Digite o novo tamanho:");
-
-                if (escolha == null) break;
-
-                int tamanhoNovo = Integer.parseInt(escolha);
-
-                config = Files.readAllLines(PATH_ARQUIVO_CONF);
-                config.remove(TAMANHO_FONTE);
-                config.add(TAMANHO_FONTE, CONF_TAM_FONTE + String.valueOf(tamanhoNovo));
-
-                Files.write(PATH_ARQUIVO_CONF, config);
-
-                JOptionPane.showMessageDialog(null, "Reinicie o aplicativo para as alterações serem aplicadas.", "Configurações alteradas", JOptionPane.    INFORMATION_MESSAGE);
-                break;
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Não foi possível alterar ou acessar o arquivo de configurações.", "Erro", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-                break;
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Digite somente valores números inteiros.", "Erro", JOptionPane.ERROR_MESSAGE);
-                continue reinicio;
-            }
-        }
     }
 
     public static void alterarTema() {
@@ -224,7 +240,7 @@ public class Config {
                 }
 
                 if (config.get(FONTE).contains("=") && configFonte[0].equals("FONTE")) {
-                    if (configFonte[1].equals("jetbrains")) fonteDefinida = fontePadrao;
+                    if (configFonte[1].equals("jetbrains")) fonteDefinida = fonteCustom.deriveFont(Float.parseFloat(configTamFonte[1]));
                     else if (!fontesDisponiveis.contains(configFonte[1])) {
                         JOptionPane.showMessageDialog(null, "A fonte inserida não é válida.");
 
@@ -243,6 +259,7 @@ public class Config {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Não foi possível criar ou ler o arquivo de configurações.", "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
             System.exit(1);
         }
 
