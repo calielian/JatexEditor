@@ -17,24 +17,36 @@ public class Arquivo {
     private static Editor editor = Main.editor;
 
     public static void criarNovoArquivo() {
+        // cria um objeto de uma janela para que possa escolher aonde salvar o arquivo
         JFileChooser escolher = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
-        String nome = JOptionPane.showInputDialog("Digite o nome do arquivo:");
+        // pergunta o nome completo o arquivo
+        String nome = JOptionPane.showInputDialog("Digite o nome e extensão do arquivo:");
 
+        // se for fechado, cancelar operação retornando
         if (nome == null) return;
 
         boolean sobrescrever = false;
 
+        // configura a janela para selecionar somente diretórios
         escolher.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        // cria a lista de opções
         Object[] opcoes = {"Renomear", "Sobrescrever"};
 
+        // abre a janela e pega a opção selecionada
         if (escolher.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            // caso seja selecioado um diretório:
+            // cria uma label, que leva a um loop:
             reinicio: while (true) {
                 try {
+                    // pega o caminho do diretório
                     String caminho = escolher.getSelectedFile().getAbsolutePath();
                     
+                    // cria um objeto do arquivo naquele diretório
                     file = new File(caminho + "/" + nome);
 
+                    // tenta criar um arquivo sendo executado caso não for possível criar o arquivo
                     while (!file.createNewFile()) {
                         int opcao = JOptionPane.showOptionDialog(
                             null,
@@ -48,11 +60,11 @@ public class Arquivo {
                         );
 
                         if (opcao == JOptionPane.YES_OPTION) {
-                            // renomear
+                            // renomeia o arquivo
                             nome = JOptionPane.showInputDialog("Digite o novo nome do arquivo: ");
-                            continue reinicio;
+                            continue reinicio; // retorna ao label
                         } else {
-                            // sobrescrever
+                            // sobrescreve o arquivo
                             sobrescrever = true;
                             if (editor.texto.getText().length() > 0) Files.writeString(Path.of(caminho + "/" + nome), editor.texto.getText());
                             else Files.writeString(Path.of(caminho + "/" + nome), "");
@@ -64,13 +76,15 @@ public class Arquivo {
                         }
                     }
 
+                    // já adiciona o texto digitado pelo usuário, caso tenha escrito algo, ao arquivo criado
                     if (editor.texto.getText().length() > 0) Files.writeString(Path.of(caminho + "/" + nome), editor.texto.getText());
 
                     Main.definirNomeArquivoTitulo(nome, false);
                     editor.atualizarTexto(Files.readAllBytes(file.toPath()));
 
-                    break;
+                    break; // encerra o loop
                 } catch (IOException e) {
+                    // caso não for possível criar/sobrescrever o arquivo
                     if (!sobrescrever) JOptionPane.showMessageDialog(null, "Não foi possível criar o arquivo, tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
                     else JOptionPane.showMessageDialog(null, "Não foi possível sobrescrever o arquivo, verifique se possui a permissão de escrita sobre o arquivo.", "Erro", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -103,7 +117,9 @@ public class Arquivo {
 
     public static void salvarArquivo() {
         if (file != null) {
+            // se o arquivo não for nulo (foi criado)
             try {
+                // tenta escrever o conteúdo digitado nele
                 Files.writeString(Path.of(file.getAbsolutePath()), editor.texto.getText());
                 editor.atualizarTexto(Files.readAllBytes(file.toPath()));
                 Main.definirNomeArquivoTitulo(file.getName(), false);
@@ -112,13 +128,17 @@ public class Arquivo {
                 e.printStackTrace();
             }
         } else {
+            // senão: manda criar um novo
             criarNovoArquivo();
         }
     }
 
     public static void salvarArquivoComo() {
         JFileChooser escolher;
+        
+        // "semelhante igual" o método de criar arquivo, com 1 diferença:
     
+        // define se vai abrir a janela já no diretório parente do arquivo, ou não
         if (file != null) {
             escolher = new JFileChooser(file.getParentFile());
         } else {
