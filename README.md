@@ -5,7 +5,7 @@ A única biblioteca externa utilizada no aplicativo é [FlatLaf](https://github.
 
 Foi utilizado, como fonte padrão, o [JetBrains Mono](https://www.jetbrains.com/lp/mono/), também open-source.
 
-A ferramenta de buid utilizada foi o ***(Apache Maven)[https://maven.apache.org/]***.
+A ferramenta de buid utilizada foi o ***(Apache Maven) [https://maven.apache.org/]***.
 
 ## Imagens demonstrativas da interface
 
