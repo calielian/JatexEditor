@@ -15,6 +15,6 @@ A ferramenta de buid utilizada foi o ***[Apache Maven](https://maven.apache.org/
 
 ## Build
 
-Para construir o aplicativo é simples: é necessário somente possuir (Apache Maven[https://maven.apache.org/](makefile é opcional)
+Para construir o aplicativo é simples: é necessário somente possuir [Apache Maven](https://maven.apache.org/) (makefile é opcional)
 
 Simplesmente vá para o diretório onde está o arquivo *pom.xml* e digite na linha de comando ```mvn packge```, será gerado o diretório "*target*", onde estará o arquivo *jatexteditor-1.0.jar*, só executar o arquivo jar e pronto.
